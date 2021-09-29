@@ -7,15 +7,18 @@ class Game(models.Model):
     releasedate = models.DateField()
 
     #Developers
-    devGroups = models.ManyToManyField(Group)
+    devGroups = models.ManyToManyField(Group, related_name="devGroups")
     devPeople = models.ManyToManyField(Person)
 
-    publishers = models.ManyToManyField(Group)
+    publishers = models.ManyToManyField(Group, related_name="publishers")
 
     platforms = models.ManyToManyField('Platform')
-    engine = models.ForeignKey('Engine', on_delete=models.SET_NULL, null=True, blank=True)
+    engine = models.ForeignKey('Engine', on_delete=models.SET_NULL, null=True, blank=True, related_name="engine")
 
     tags = models.ManyToManyField(Tag)
+
+    class Meta:
+        ordering = ['title']
 
     def __str__(self):
         return self.title
@@ -55,8 +58,8 @@ class Engine(models.Model):
     lastreleasedate = models.DateField()
 
     # Relations with other engines
-    predecessor = models.ForeignKey('Engine', on_delete=models.SET_NULL, null=True, blank=True)
-    successor = models.ForeignKey('Engine', on_delete=models.SET_NULL, null=True, blank=True)
+    predecessor = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name="predecessor_id")
+    successor = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name="successor_id")
 
     # Developers
     devGroups = models.ManyToManyField(Group)
